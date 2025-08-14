@@ -1,0 +1,82 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: #a8a8a8; 
+  border-radius: 6px;
+  border: 2px solid #f1f1f1; 
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+/* --- Dark Mode Styles --- */
+
+.dark {
+  --tw-bg-opacity: 1;
+  background-color: rgba(17, 24, 39, var(--tw-bg-opacity));
+  color: rgba(243, 244, 246, var(--tw-text-opacity));
+}
+
+.dark .bg-white {
+  background-color: rgba(31, 41, 55, var(--tw-bg-opacity));
+}
+
+.dark .bg-gray-50 {
+  background-color: rgba(31, 41, 55, var(--tw-bg-opacity));
+}
+
+.dark .border-gray-100,
+.dark .border-gray-300 {
+  border-color: rgba(75, 85, 99, var(--tw-border-opacity));
+}
+
+.dark .text-gray-600,
+.dark .text-gray-700,
+.dark .text-gray-800 {
+  color: rgba(209, 213, 219, var(--tw-text-opacity));
+}
+
+.dark .text-gray-400 {
+  color: rgba(156, 163, 175, var(--tw-text-opacity));
+}
+
+.dark .bg-gray-100 {
+  background-color: rgba(55, 65, 81, var(--tw-bg-opacity));
+}
+
+.dark .bg-gray-900 {
+  background-color: rgba(17, 24, 39, var(--tw-bg-opacity));
+}
+
+
+.dark ::-webkit-scrollbar-track {
+  background: #1a202c; 
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4a5568; 
+  border: 2px solid #1a202c;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #718096; 
+}
