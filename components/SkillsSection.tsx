@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const SKILLS = [
   { name: 'React',        icon: '⚛',  cat: 'FRONTEND',  tip: 'Component-based UI development' },
@@ -10,7 +10,7 @@ const SKILLS = [
   { name: 'Firebase',     icon: '🔥', cat: 'DATABASE',  tip: 'Realtime DB & hosting' },
   { name: 'Supabase',     icon: '⚡', cat: 'DATABASE',  tip: 'Postgres + Auth + Storage' },
   { name: 'MongoDB',      icon: '🍃', cat: 'DATABASE',  tip: 'NoSQL document store' },
-  { name: 'Gemini AI',    icon: '✦',  cat: 'AI/ML',     tip: 'LLM-powered features' },
+  { name: 'Generative AI',icon: '✦',  cat: 'AI/ML',     tip: 'LLM & API Integrations' },
   { name: 'IoT / ESP32',  icon: '📡', cat: 'HARDWARE',  tip: 'Sensor integration & MQTT' },
   { name: 'Git / GitHub', icon: '🐙', cat: 'TOOLS',     tip: 'Version control & CI' },
   { name: 'Razorpay',     icon: '💳', cat: 'TOOLS',     tip: 'Payment gateway integration' },
@@ -28,6 +28,7 @@ const CAT_COLORS: Record<string, { border: string; bg: string; text: string }> =
 };
 
 export const SkillsSection = () => {
+  const [filter, setFilter] = useState<string | null>(null);
   return (
     <section id="skills" className="py-24 px-6 md:px-12 lg:px-24 relative">
       <div className="max-w-6xl mx-auto">
@@ -40,30 +41,34 @@ export const SkillsSection = () => {
         {/* Category legend */}
         <div className="flex flex-wrap gap-3 mb-8">
           {Object.entries(CAT_COLORS).map(([cat, c]) => (
-            <div
+            <button
               key={cat}
-              className="font-pixel px-3 py-1.5"
+              onClick={() => setFilter(filter === cat ? null : cat)}
+              className="font-pixel px-3 py-1.5 transition-all cursor-pointer"
               style={{
                 fontSize: '0.5rem',
                 color: c.text,
                 border: `1px solid ${c.border}`,
-                background: c.bg,
+                background: filter === cat ? c.bg.replace('0.08', '0.25') : c.bg,
                 letterSpacing: '0.1em',
+                opacity: filter && filter !== cat ? 0.4 : 1,
+                boxShadow: filter === cat ? `3px 3px 0 ${c.border}` : 'none',
+                transform: filter === cat ? 'translate(-2px, -2px)' : 'none',
               }}
             >
               {cat}
-            </div>
+            </button>
           ))}
         </div>
 
         {/* Skills grid — 3 columns desktop for bigger, readable cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {SKILLS.map((skill) => {
+          {SKILLS.filter(s => !filter || s.cat === filter).map((skill) => {
             const c = CAT_COLORS[skill.cat] ?? CAT_COLORS.TOOLS;
             return (
               <div
                 key={skill.name}
-                className="skill-card relative flex flex-col items-center justify-center gap-3 p-4 cursor-default select-none transition-all duration-150"
+                className="skill-card relative flex flex-col items-center justify-center gap-3 p-4 cursor-pointer select-none transition-all duration-150"
                 style={{
                   background: '#020617',
                   border: `2px solid ${c.border}`,

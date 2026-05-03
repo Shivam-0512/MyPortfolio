@@ -1,30 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Github, Linkedin, Instagram } from 'lucide-react';
 import { PixelButton } from './PixelButton';
 
 const LINES = [
-  { text: '> Shivam Kushwaha', color: '#4ade80',  delay: 0 },
+  { text: '> Shivam Kushwaha', color: '#4ade80', delay: 0 },
   { text: '  Full Stack Developer', color: '#a5b4fc', delay: 1400 },
   { text: '  AI + IoT Specialist', color: '#22d3ee', delay: 2800 },
 ];
 
+const DESCRIPTION = `> I build real projects that solve real problems. From IoT safety systems to competitive coding platforms — I focus on clean code, good performance, and things that actually work in the real world. Award winner @ IIT Bombay 2024.`;
+
 const STAR_COUNT = 40;
 
-function generateHeroStars() {
-  return Array.from({ length: STAR_COUNT }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    char: ['*', '·', '+'][Math.floor(Math.random() * 3)],
-    dur: 1.5 + Math.random() * 3,
-    delay: Math.random() * 4,
-  }));
+// Typing animation hook
+function useTypingEffect(text: string, enabled: boolean, speed = 18) {
+  const [displayed, setDisplayed] = useState('');
+  const [done, setDone] = useState(false);
+  const indexRef = useRef(0);
+
+  useEffect(() => {
+    if (!enabled) return;
+    indexRef.current = 0;
+    setDisplayed('');
+    setDone(false);
+
+    const interval = setInterval(() => {
+      if (indexRef.current < text.length) {
+        setDisplayed(text.slice(0, indexRef.current + 1));
+        indexRef.current++;
+      } else {
+        clearInterval(interval);
+        setDone(true);
+      }
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [enabled, text, speed]);
+
+  return { displayed, done };
 }
 
 export const HeroSection = () => {
   const [visibleLines, setVisibleLines] = useState<number[]>([]);
   const [showButtons, setShowButtons] = useState(false);
-  const [stars] = useState(generateHeroStars);
+  const { displayed: typedDesc, done: descDone } = useTypingEffect(DESCRIPTION, showButtons);
 
   useEffect(() => {
     LINES.forEach((line, i) => {
@@ -42,31 +61,6 @@ export const HeroSection = () => {
       id="home"
       className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-24 pt-24 pb-12 overflow-hidden"
     >
-      {/* Hero background stars */}
-      {stars.map(s => (
-        <span
-          key={s.id}
-          className="star"
-          style={{
-            left: `${s.x}%`,
-            top: `${s.y}%`,
-            '--duration': `${s.dur}s`,
-            '--delay': `${s.delay}s`,
-          } as React.CSSProperties}
-        >
-          {s.char}
-        </span>
-      ))}
-
-      {/* Decorative pixel grid bg */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-5"
-        style={{
-          backgroundImage: 'linear-gradient(#6366f1 1px, transparent 1px), linear-gradient(90deg, #6366f1 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
-      />
-
       <div className="relative z-10 max-w-6xl mx-auto w-full flex flex-col md:flex-row items-center md:items-start gap-12">
 
         {/* Left: Terminal text */}
@@ -117,25 +111,25 @@ export const HeroSection = () => {
                   </span>
                 )}
                 {/* cursor on last visible line */}
-                {visibleLines[visibleLines.length - 1] === i && (
+                {visibleLines[visibleLines.length - 1] === i && !showButtons && (
                   <span className="cursor-blink ml-1" style={{ color: '#4ade80', fontSize: '1em' }}>_</span>
                 )}
               </div>
             ))}
 
-            {/* Description */}
+            {/* Typing description */}
             {showButtons && (
               <p
                 className="font-pixel mt-4 mb-6 leading-loose"
-                style={{ fontSize: '0.62rem', color: '#64748b', animation: 'fadeIn 0.5s ease-out' }}
+                style={{ fontSize: '0.62rem', color: '#64748b' }}
               >
-                {'>'} Building end-to-end solutions — from AI e-commerce platforms<br/>
-                {'  '} to smart IoT systems. Award winner @ IIT Bombay 2024.
+                {typedDesc}
+                <span className="cursor-blink ml-0.5" style={{ color: '#4ade80' }}>_</span>
               </p>
             )}
 
-            {/* Action buttons */}
-            {showButtons && (
+            {/* Action buttons — appear after description finishes */}
+            {descDone && (
               <div
                 className="flex flex-wrap gap-4 mt-2"
                 style={{ animation: 'slideUp 0.5s ease-out' }}
@@ -146,12 +140,15 @@ export const HeroSection = () => {
                 <PixelButton variant="outline" as="a" href="#projects">
                   [ VIEW LEVELS ]
                 </PixelButton>
+                <PixelButton variant="outline" as="a" href="/resume.pdf" target="_blank" rel="noopener noreferrer">
+                  [ RESUME.PDF ]
+                </PixelButton>
               </div>
             )}
           </div>
 
           {/* Social Links */}
-          {showButtons && (
+          {descDone && (
             <div
               className="flex gap-3 mt-6"
               style={{ animation: 'slideUp 0.6s ease-out' }}
@@ -193,7 +190,7 @@ export const HeroSection = () => {
           )}
         </div>
 
-        {/* Right: Profile image in pixel frame */}
+        {/* Right: Profile image */}
         <div
           className="relative flex-shrink-0 hidden md:block"
           style={{ animation: 'fadeIn 1s ease-out 0.5s both' }}
@@ -209,33 +206,21 @@ export const HeroSection = () => {
             }}
           >
             <img
-              src="./assets/profile.png"
+              src="/assets/profile.png"
               alt="Shivam Kushwaha"
               className="w-64 h-64 object-cover block"
               style={{ display: 'block', filter: 'contrast(1.05) saturate(0.95)' }}
             />
             {/* Pixel corner decorators */}
-            <div
-              className="absolute -top-1 -left-1 w-3 h-3"
-              style={{ background: '#4ade80' }}
-            />
-            <div
-              className="absolute -top-1 -right-1 w-3 h-3"
-              style={{ background: '#4ade80' }}
-            />
-            <div
-              className="absolute -bottom-1 -left-1 w-3 h-3"
-              style={{ background: '#4ade80' }}
-            />
-            <div
-              className="absolute -bottom-1 -right-1 w-3 h-3"
-              style={{ background: '#4ade80' }}
-            />
+            <div className="absolute -top-1 -left-1 w-3 h-3" style={{ background: '#4ade80' }} />
+            <div className="absolute -top-1 -right-1 w-3 h-3" style={{ background: '#4ade80' }} />
+            <div className="absolute -bottom-1 -left-1 w-3 h-3" style={{ background: '#4ade80' }} />
+            <div className="absolute -bottom-1 -right-1 w-3 h-3" style={{ background: '#4ade80' }} />
           </div>
 
-          {/* Status badge */}
+          {/* Status badge — blinking dot */}
           <div
-            className="absolute -bottom-4 left-0 right-0 mx-auto font-pixel text-center py-1"
+            className="absolute -bottom-4 left-0 right-0 mx-auto font-pixel text-center py-1 flex items-center justify-center gap-1"
             style={{
               fontSize: '0.38rem',
               color: '#4ade80',
@@ -245,18 +230,40 @@ export const HeroSection = () => {
               letterSpacing: '0.1em',
             }}
           >
-            ● ONLINE — OPEN TO WORK
+            <span className="cursor-blink" style={{ fontSize: '0.7rem', lineHeight: 1 }}>●</span>
+            <span>ONLINE — OPEN TO WORK</span>
           </div>
         </div>
       </div>
 
-      {/* Scroll hint */}
-      {showButtons && (
+      {/* Scroll hint — game-like ▼ NEXT LEVEL ▼ */}
+      {descDone && (
         <div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 font-pixel cursor-blink"
-          style={{ fontSize: '0.55rem', color: '#4338ca' }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 cursor-pointer select-none"
+          onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
         >
-          ▼ SCROLL DOWN ▼
+          <span
+            className="font-pixel"
+            style={{
+              fontSize: '0.5rem',
+              color: '#4338ca',
+              letterSpacing: '0.15em',
+              animation: 'float 2s ease-in-out infinite',
+            }}
+          >
+            ▼ NEXT LEVEL ▼
+          </span>
+          <span
+            className="font-pixel"
+            style={{
+              fontSize: '0.38rem',
+              color: '#1e293b',
+              letterSpacing: '0.1em',
+              animationDelay: '0.3s',
+            }}
+          >
+            PRESS DOWN TO CONTINUE
+          </span>
         </div>
       )}
     </section>

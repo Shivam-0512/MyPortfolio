@@ -65,6 +65,14 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ onComplete }) => {
     };
   }, []);
 
+  useEffect(() => {
+    // Hide scrollbar on the main body while loading screen is active
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   const handleStart = () => {
     if (pressed) return;
     setPressed(true);

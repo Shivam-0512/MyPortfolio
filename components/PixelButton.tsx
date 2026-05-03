@@ -1,4 +1,5 @@
 import React from 'react';
+import { playBeep } from '../utils/audio';
 
 interface PixelButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'outline';
@@ -21,16 +22,21 @@ export const PixelButton: React.FC<PixelButtonProps> = ({
 }) => {
   const classes = `pixel-btn ${variant === 'primary' ? 'pixel-btn-primary' : ''} ${className}`;
 
+  const handleClick = (e: React.MouseEvent<any>) => {
+    playBeep();
+    if (props.onClick) props.onClick(e);
+  };
+
   if (as === 'a' && href) {
     return (
-      <a href={href} target={target} rel={rel} className={classes}>
+      <a href={href} target={target} rel={rel} className={classes} onClick={handleClick}>
         {children}
       </a>
     );
   }
 
   return (
-    <button className={classes} {...props}>
+    <button className={classes} {...props} onClick={handleClick}>
       {children}
     </button>
   );

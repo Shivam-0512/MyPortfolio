@@ -1,31 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { MenuIcon, XIcon } from 'lucide-react';
+import { playBeep } from '../utils/audio';
 
 const NAV_ITEMS = [
-  { label: 'MAP',       href: '#home'      },
-  { label: 'CHARACTER', href: '#about'     },
-  { label: 'INVENTORY', href: '#skills'    },
-  { label: 'LEVELS',    href: '#projects'  },
-  { label: 'QUESTS',    href: '#contact'   },
+  { label: 'MAP',          href: '#home'         },
+  { label: 'CHARACTER',    href: '#about'        },
+  { label: 'INVENTORY',    href: '#skills'       },
+  { label: 'LEVELS',       href: '#projects'     },
+  { label: 'ACHIEVEMENTS', href: '#achievements' },
+  { label: 'QUESTS',       href: '#contact'      },
 ];
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [active, setActive] = useState('MAP');
+  const lastScrollY = React.useRef(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', onScroll);
+    const onScroll = () => {
+      const currentY = window.scrollY;
+      // Always show at the very top
+      if (currentY < 10) {
+        setVisible(true);
+        setScrolled(false);
+      } else {
+        setScrolled(true);
+        // Scrolling down → hide; scrolling up → show
+        setVisible(currentY < lastScrollY.current);
+      }
+      lastScrollY.current = currentY;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
     <header
       id="hud-header"
-      className={`fixed top-0 left-0 w-full z-50 hud-flicker transition-all duration-300
-        ${scrolled ? 'bg-[#020617]/95' : 'bg-[#020617]/85'} backdrop-blur-sm`}
-      style={{ borderBottom: '2px solid #4338ca', boxShadow: '0 4px 0 #1e1b4b' }}
+      className={`fixed top-0 left-0 w-full z-50 hud-flicker backdrop-blur-sm`}
+      style={{
+        borderBottom: '2px solid #4338ca',
+        boxShadow: '0 4px 0 #1e1b4b',
+        background: scrolled ? 'rgba(2,6,23,0.95)' : 'rgba(2,6,23,0.85)',
+        transform: visible ? 'translateY(0)' : 'translateY(-110%)',
+        opacity: visible ? 1 : 0,
+        transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease',
+      }}
     >
       {/* Top scanline strip */}
       <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent, #6366f1, transparent)' }} />
@@ -48,7 +70,7 @@ export const Header: React.FC = () => {
                 key={item.label}
                 href={item.href}
                 id={`nav-${item.label.toLowerCase()}`}
-                onClick={() => setActive(item.label)}
+                onClick={() => { playBeep(); setActive(item.label); }}
                 className="font-pixel transition-all duration-150 px-3 py-2 no-underline"
                 style={{
                   fontSize: '0.45rem',
@@ -72,17 +94,28 @@ export const Header: React.FC = () => {
 
           {/* Right: HP bar + mobile menu */}
           <div className="flex items-center gap-4">
-            {/* Decorative HP bar */}
-            <div className="hidden md:flex flex-col items-end gap-0.5">
-              <div className="font-pixel text-pixel-green" style={{ fontSize: '0.35rem' }}>HP ████████░░</div>
-              <div className="font-pixel text-pixel-neon" style={{ fontSize: '0.35rem' }}>MP ██████░░░░</div>
+            {/* Character HUD Stats */}
+            <div className="hidden md:flex flex-col items-end gap-1.5">
+              <div className="font-pixel flex gap-3" style={{ fontSize: '0.38rem', color: '#a5b4fc' }}>
+                <span>NAME: SHIVAM</span>
+                <span>CLASS: DEV</span>
+                <span>LVL: 02</span>
+              </div>
+              <div className="flex gap-4">
+                <div className="font-pixel" style={{ fontSize: '0.35rem', color: '#4ade80' }}>
+                  HP <span style={{ letterSpacing: '0.1em' }}>███████░░</span>
+                </div>
+                <div className="font-pixel" style={{ fontSize: '0.35rem', color: '#facc15' }}>
+                  XP <span style={{ letterSpacing: '0.1em' }}>█████░░░░</span>
+                </div>
+              </div>
             </div>
 
             {/* Mobile toggle */}
             <button
               id="mobile-menu-toggle"
               className="md:hidden pixel-btn p-2 text-pixel-neon"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => { playBeep(); setIsMenuOpen(!isMenuOpen); }}
               style={{ fontSize: '0.5rem', border: '2px solid #4338ca', boxShadow: '2px 2px 0 #1e1b4b' }}
             >
               {isMenuOpen ? <XIcon size={14} /> : <MenuIcon size={14} />}
@@ -102,7 +135,7 @@ export const Header: React.FC = () => {
                 href={item.href}
                 className="font-pixel px-3 py-3 no-underline transition-colors"
                 style={{ fontSize: '0.5rem', color: '#94a3b8', letterSpacing: '0.12em' }}
-                onClick={() => { setActive(item.label); setIsMenuOpen(false); }}
+                onClick={() => { playBeep(); setActive(item.label); setIsMenuOpen(false); }}
               >
                 <span style={{ color: '#4ade80', marginRight: 8 }}>{'>'}</span>
                 {item.label}

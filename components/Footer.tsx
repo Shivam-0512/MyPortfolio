@@ -22,26 +22,27 @@ export const Footer = () => {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
 
         {/* Logo */}
-        <div className="font-pixel flex items-center gap-1">
-          <span style={{ color: '#4ade80', fontSize: '0.7rem' }}>SK</span>
-          <span style={{ color: '#6366f1', fontSize: '0.7rem' }}>.</span>
-          <span style={{ color: '#a5b4fc', fontSize: '0.7rem' }}>EXE</span>
+        <div className="font-pixel flex items-center gap-1 flex-1 justify-start">
+          <span style={{ color: '#4ade80', fontSize: '0.85rem' }}>SK</span>
+          <span style={{ color: '#6366f1', fontSize: '0.85rem' }}>.</span>
+          <span style={{ color: '#a5b4fc', fontSize: '0.85rem' }}>EXE</span>
         </div>
 
         {/* Nav */}
         <nav className="flex gap-4 flex-wrap justify-center">
           {[
-            { label: 'MAP',       href: '#home'     },
-            { label: 'CHARACTER', href: '#about'    },
-            { label: 'INVENTORY', href: '#skills'   },
-            { label: 'LEVELS',    href: '#projects' },
-            { label: 'QUESTS',    href: '#contact'  },
+            { label: 'MAP', href: '#home' },
+            { label: 'CHARACTER', href: '#about' },
+            { label: 'INVENTORY', href: '#skills' },
+            { label: 'LEVELS', href: '#projects' },
+            { label: 'ACHIEVEMENTS', href: '#achievements' },
+            { label: 'QUESTS', href: '#contact' },
           ].map(item => (
             <a
               key={item.label}
               href={item.href}
               className="font-pixel transition-colors no-underline"
-              style={{ fontSize: '0.35rem', color: '#334155', letterSpacing: '0.1em' }}
+              style={{ fontSize: '0.5rem', color: '#334155', letterSpacing: '0.1em' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#a5b4fc')}
               onMouseLeave={e => (e.currentTarget.style.color = '#334155')}
             >
@@ -51,11 +52,11 @@ export const Footer = () => {
         </nav>
 
         {/* Social */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-1 justify-end">
           {[
-            { href: 'https://github.com/Shivam-0512',             icon: <GithubIcon size={14} />,    label: 'GH' },
-            { href: 'https://www.linkedin.com/in/shivam0512/',     icon: <LinkedinIcon size={14} />,  label: 'LI' },
-            { href: 'https://www.instagram.com/shivam.k_0512/',    icon: <InstagramIcon size={14} />, label: 'IG' },
+            { href: 'https://github.com/Shivam-0512', icon: <GithubIcon size={14} />, label: 'GH' },
+            { href: 'https://www.linkedin.com/in/shivam0512/', icon: <LinkedinIcon size={14} />, label: 'LI' },
+            { href: 'https://www.instagram.com/shivam.k_0512/', icon: <InstagramIcon size={14} />, label: 'IG' },
           ].map(s => (
             <a
               key={s.label}
@@ -64,7 +65,7 @@ export const Footer = () => {
               rel="noopener noreferrer"
               className="font-pixel flex items-center gap-1 transition-all no-underline"
               style={{
-                fontSize: '0.3rem',
+                fontSize: '0.45rem',
                 color: '#334155',
                 border: '2px solid #1e293b',
                 padding: '6px 8px',
@@ -90,12 +91,12 @@ export const Footer = () => {
 
       {/* Bottom bar */}
       <div
-        className="mt-6 pt-4 text-center font-pixel"
-        style={{ borderTop: '1px dashed #1e293b', fontSize: '0.32rem', color: '#1e293b', letterSpacing: '0.12em' }}
+        className="mt-6 pt-4 w-full flex justify-center items-center font-pixel"
+        style={{ borderTop: '1px dashed #1e293b', fontSize: '0.45rem', letterSpacing: '0.12em' }}
       >
-        © {year} SHIVAM KUSHWAHA — SHIVAM.EXE — ALL RIGHTS RESERVED
-        &nbsp;|&nbsp;
-        <span style={{ color: '#4338ca' }}>MADE WITH ♥ IN INDIA</span>
+        <span style={{ color: '#4338ca', textAlign: 'center' }}>
+          © {year} SHIVAM KUSHWAHA — SHIVAM.EXE — ALL RIGHTS RESERVED
+        </span>
       </div>
     </footer>
   );

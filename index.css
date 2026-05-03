@@ -134,6 +134,15 @@ body {
   animation: blink 1s step-end infinite;
 }
 
+/* ───── FLOAT ANIMATION ───── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
 /* ───── INTRO SCREEN ───── */
 @keyframes introFadeOut {
   0%   { opacity: 1; pointer-events: all; }
@@ -263,4 +272,23 @@ body {
   .font-pixel {
     font-size: 0.6rem;
   }
+}/* ----- INTRO GLITCH & FADE OUT ----- */
+@keyframes introFadeOut {
+  0% { opacity: 1; pointer-events: all; transform: scale(1); filter: contrast(1); }
+  20% { opacity: 1; transform: scale(1.02) translate(4px, -2px); filter: contrast(2) hue-rotate(90deg); }
+  40% { opacity: 0.8; transform: scale(0.96) translate(-4px, 4px); filter: contrast(3) invert(1); }
+  60% { opacity: 0.9; transform: scale(1.05) translate(2px, -2px); filter: contrast(1) hue-rotate(-90deg); }
+  100% { opacity: 0; pointer-events: none; transform: scale(2.5); filter: blur(10px); }
+}
+.intro-fade-out {
+  animation: introFadeOut 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* ----- GENTLE FLOAT (subtle, 4px travel) ----- */
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+.animate-gentle-float {
+  animation: gentleFloat 6s ease-in-out infinite;
 }
