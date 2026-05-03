@@ -1,161 +1,222 @@
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, Github } from 'lucide-react'; // Corrected icon imports
+import { ExternalLink, Github } from 'lucide-react';
+import { PixelButton } from './PixelButton';
 
-// --- ProjectCard Component ---
-// This new component manages the image slideshow for a single project.
-const ProjectCard = ({ project }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+const projects = [
+  {
+    title: 'RevCraft',
+    subtitle: 'AI-Powered Car Modification Platform',
+    description: 'Full-stack e-commerce for car enthusiasts. Seller portal, AI ModBot via Gemini API for smart modification advice and product recommendations.',
+    images: [
+      './assets/revcraft1.png',
+      './assets/revcraft2.png',
+      './assets/revcraft3.png',
+      './assets/revcraft4.png',
+    ],
+    tags: ['React', 'Node.js', 'Supabase', 'SQL', 'Gemini API', 'Razorpay', 'TypeScript'],
+    liveLink: 'https://revcraft.netlify.app/',
+    githubLink: 'https://github.com/Shivam-0512/RevCraft',
+    difficulty: '★★★★☆',
+  },
+  {
+    title: 'EcoBin',
+    subtitle: 'IoT Smart Waste Management System',
+    description: 'End-to-end IoT solution: sensor-equipped smart bins, real-time admin dashboard, and route-optimized mobile app for waste collection workers.',
+    images: [
+      './assets/ecobin1.png',
+      './assets/ecobin2.png',
+      './assets/ecobin3.png',
+      './assets/ecobin4.png',
+    ],
+    tags: ['IoT', 'Python', 'Firebase', 'JavaScript', 'Android Studio'],
+    liveLink: 'https://testbin-586ac.web.app/',
+    githubLink: 'https://github.com/Shivam-0512/EcoBin',
+    difficulty: '★★★★★',
+  },
+  {
+    title: 'MailExtracto',
+    subtitle: 'Intelligent Email Automation Bot',
+    description: 'Award-winning bot that intelligently extracts data from emails → Google Sheets. Top 10 project at Techfest IIT Bombay 2024.',
+    images: [
+      './assets/mailextracto1.png',
+      './assets/mailextracto2.png',
+      './assets/mailextracto3.png',
+      './assets/mailextracto5.jpg',
+    ],
+    tags: ['Python', 'Automation', 'Google Sheets API', 'TruBot'],
+    liveLink: 'https://drive.google.com/file/d/121cKbKBEZpgxRUPP53Fziwqb_Zo4CS5s/view?usp=sharing',
+    githubLink: 'https://github.com/Shivam-0512/IIT-Bombay-MailExtracto',
+    difficulty: '★★★☆☆',
+  },
+  {
+    title: 'Portfolio',
+    subtitle: 'Personal Developer Portfolio',
+    description: 'Responsive pixel-art retro game portfolio built with React + Tailwind CSS. Features a live intro screen, RPG character panel, and quest-based contact.',
+    images: [
+      './assets/protfolio1.png',
+      './assets/protfolio2.png',
+      './assets/protfolio3.png',
+    ],
+    tags: ['React', 'Tailwind CSS', 'TypeScript'],
+    liveLink: 'https://shivam-kushwaha.netlify.app/',
+    githubLink: 'https://github.com/Shivam-0512/MyPortfolio',
+    difficulty: '★★☆☆☆',
+  },
+];
 
-  // This effect sets up an interval to cycle through the images.
+const LevelCard = ({ project, index }: { project: typeof projects[0]; index: number }) => {
+  const [imgIdx, setImgIdx] = useState(0);
+  const [hovered, setHovered] = useState(false);
+
   useEffect(() => {
-    // Ensure the project has more than one image before starting the slideshow.
-    if (project.images && project.images.length > 1) {
-      const intervalId = setInterval(() => {
-        // Move to the next image, looping back to the start if at the end.
-        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % project.images.length);
-      }, 2000); // Change image every 3 seconds
+    if (project.images.length <= 1) return;
+    const id = setInterval(() => {
+      setImgIdx(prev => (prev + 1) % project.images.length);
+    }, 2200);
+    return () => clearInterval(id);
+  }, [project.images]);
 
-      // Cleanup function to clear the interval when the component unmounts.
-      return () => clearInterval(intervalId);
-    }
-  }, [project.images]); // Rerun effect if the images array changes.
+  const levelNum = String(index + 1).padStart(2, '0');
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col">
-      {/* Image container with slideshow */}
-      <div className="h-60 overflow-hidden relative">
-        {project.images.map((image, index) => (
+    <div
+      className="relative flex flex-col overflow-hidden transition-all duration-200"
+      style={{
+        background: '#020617',
+        border: '2px solid #4338ca',
+        boxShadow: hovered
+          ? '6px 6px 0px #4f46e5, 0 0 22px rgba(99,102,241,0.25)'
+          : '5px 5px 0px #1e1b4b',
+        transform: hovered ? 'translate(-2px,-2px)' : 'none',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Level header bar */}
+      <div
+        className="flex items-center justify-between px-4 py-2"
+        style={{ background: '#0a0f1e', borderBottom: '2px solid #4338ca' }}
+      >
+        <span className="font-pixel" style={{ fontSize: '0.45rem', color: '#4ade80' }}>
+          LEVEL {levelNum}
+        </span>
+        <span className="font-pixel" style={{ fontSize: '0.38rem', color: '#334155' }}>
+          {project.difficulty}
+        </span>
+      </div>
+
+      {/* Image slideshow */}
+      <div className="relative h-52 overflow-hidden" style={{ background: '#0a0f1e' }}>
+        {project.images.map((img, i) => (
           <img
-            key={index}
-            src={image}
-            alt={`${project.title} screenshot ${index + 1}`}
-            className={`
-              w-full h-full object-cover absolute top-0 left-0 transition-opacity duration-1000 ease-in-out
-              ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}
-            `}
+            key={i}
+            src={img}
+            alt={`${project.title} screenshot ${i + 1}`}
+            className="w-full h-full object-cover absolute inset-0 transition-opacity duration-700"
+            style={{ opacity: i === imgIdx ? 1 : 0 }}
           />
         ))}
-      </div>
-      {/* Content container */}
-      <div className="p-6 flex-grow flex flex-col">
-        <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{project.title}</h3>
-        <p className="text-gray-600 dark:text-gray-300 mb-4 flex-grow">{project.description}</p>
-        <div className="flex flex-wrap gap-2 mb-6">
-          {project.tags.map((tag, i) => (
-            <span
+        {/* Scanline on image */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.08) 3px,rgba(0,0,0,0.08) 4px)',
+          }}
+        />
+        {/* Image dot indicators */}
+        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
+          {project.images.map((_, i) => (
+            <div
               key={i}
-              className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200 text-sm rounded-full"
+              className="w-1.5 h-1.5"
+              style={{ background: i === imgIdx ? '#6366f1' : '#1e293b' }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-grow">
+        {/* Title */}
+        <h3
+          className="font-pixel mb-1"
+          style={{ fontSize: '0.6rem', color: '#e2e8f0', letterSpacing: '0.05em' }}
+        >
+          {project.title}
+        </h3>
+        <div
+          className="font-pixel mb-3"
+          style={{ fontSize: '0.35rem', color: '#6366f1', letterSpacing: '0.05em' }}
+        >
+          {project.subtitle}
+        </div>
+
+        {/* Description */}
+        <p
+          className="font-pixel leading-loose mb-4 flex-grow"
+          style={{ fontSize: '0.34rem', color: '#475569' }}
+        >
+          {project.description}
+        </p>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1.5 mb-5">
+          {project.tags.map(tag => (
+            <span
+              key={tag}
+              className="font-pixel px-1.5 py-0.5"
+              style={{
+                fontSize: '0.28rem',
+                color: '#a5b4fc',
+                background: 'rgba(99,102,241,0.1)',
+                border: '1px solid #312e81',
+                letterSpacing: '0.06em',
+              }}
             >
               {tag}
             </span>
           ))}
         </div>
-        <div className="flex space-x-4 mt-auto">
-          <a
-            href={project.liveLink}
-            className="flex items-center text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ExternalLink size={18} className="mr-1" />
-            Live Demo
-          </a>
-          <a
-            href={project.githubLink}
-            className="flex items-center text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Github size={18} className="mr-1" />
-            Source Code
-          </a>
+
+        {/* Action buttons */}
+        <div className="flex gap-3 mt-auto">
+          <PixelButton variant="primary" as="a" href={project.liveLink} target="_blank" rel="noopener noreferrer">
+            <ExternalLink size={10} />
+            ENTER LEVEL
+          </PixelButton>
+          <PixelButton variant="outline" as="a" href={project.githubLink} target="_blank" rel="noopener noreferrer">
+            <Github size={10} />
+            {'<SRC>'}
+          </PixelButton>
         </div>
       </div>
     </div>
   );
 };
 
-
-// --- Main ProjectsSection Component ---
 export const ProjectsSection = () => {
-  // Updated project data with an 'images' array for each project.
-  // Replace these placeholder URLs with your actual project screenshots.
-  const projects = [
-    {
-      title: 'RevCraft - AI-Powered Car Modification Platform',
-      description: 'A full-stack e-commerce platform for car enthusiasts. Features a dedicated seller portal for product management and an AI "ModBot" (powered by the Gemini API) that provides smart modification advice and product recommendations.',
-      images: [
-        './assets/revcraft1.png',
-        './assets/revcraft2.png',
-        './assets/revcraft3.png',
-        './assets/revcraft4.png',
-      ],
-      tags: ['React', 'Node.js', 'Supabase', 'SQL', 'Gemini API', 'Razorpay' ,'TypeScript'],
-      liveLink: 'https://revcraft.netlify.app/',
-      githubLink: 'https://github.com/Shivam-0512/RevCraft',
-    },
-    {
-      title: 'EcoBin - IoT Smart Waste Management System',
-      description: 'An end-to-end IoT solution for efficient waste collection, featuring sensor-equipped smart bins, a real-time admin dashboard, and a route-optimized mobile app for workers.',
-      images: [
-        './assets/ecobin1.png',
-        './assets/ecobin2.png',
-        './assets/ecobin3.png',
-        './assets/ecobin4.png',
-      ],
-      tags: ['IoT', 'Python', 'Firebase', 'JavaScript', 'Android Studio', 'Pyhton'],
-      liveLink: 'https://testbin-586ac.web.app/',
-      githubLink: 'https://github.com/Shivam-0512/EcoBin',
-    },
-    {
-      title: 'MailExtracto - Intelligent Email Automation Bot',
-      description: 'An award-winning automation bot that intelligently extracts data from emails and populates it into Google Sheets, recognized as a Top 10 project at Techfest IIT Bombay 2024.',
-       images: [
-        './assets/mailextracto1.png',
-        './assets/mailextracto2.png',
-        './assets/mailextracto3.png',
-        './assets/mailextracto5.jpg',
-      ],
-      tags: ['Python', 'Automation', 'Google Sheets API' ,'Datamatics TruBot & TruCap'],
-      liveLink: 'https://drive.google.com/file/d/121cKbKBEZpgxRUPP53Fziwqb_Zo4CS5s/view?usp=sharing',
-      githubLink: 'https://github.com/Shivam-0512/IIT-Bombay-MailExtracto',
-    },
-    {
-      title: 'Personal Developer Portfolio',
-      description: 'A responsive personal portfolio built with React and Tailwind CSS, featuring a sleek design, smooth animations.',
-       images: [
-        './assets/protfolio1.png',
-        './assets/protfolio2.png',
-        './assets/protfolio3.png',
-      ],
-      tags: ['React', 'Tailwind CSS', 'Gemini API', 'TypeScript'],
-      liveLink: 'https://shivam-kushwaha.netlify.app/',
-      githubLink: 'https://github.com/Shivam-0512/MyPortfolio',
-    },
-  ];
-
   return (
-    // FIX: Removed the background color classes (bg-gray-50 dark:bg-gray-900)
-    // The section will now have a transparent background, matching the rest of the site.
     <section id="projects" className="py-24 px-6 md:px-12 lg:px-24 relative">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">My Projects</h2>
-        <div className="w-20 h-1 bg-gray-300 dark:bg-gray-700 mb-12"></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {projects.map((project, index) => (
-            <ProjectCard key={index} project={project} />
+
+        {/* Section header */}
+        <div className="pixel-section-header">
+          SELECT LEVEL — PROJECTS
+        </div>
+
+        {/* Level cards grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {projects.map((project, i) => (
+            <LevelCard key={i} project={project} index={i} />
           ))}
         </div>
-        <div className="text-center mt-16">
-          <a
-            href="https://github.com/Shivam-0512" // Your actual GitHub profile URL
-            className="px-8 py-3 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors inline-flex items-center text-gray-800 dark:text-gray-200"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Github size={18} className="mr-2" />
-            See More on GitHub
-          </a>
+
+        {/* More on GitHub */}
+        <div className="flex justify-center mt-12">
+          <PixelButton variant="outline" as="a" href="https://github.com/Shivam-0512" target="_blank" rel="noopener noreferrer">
+            <Github size={12} />
+            [ VIEW MORE LEVELS ON GITHUB ]
+          </PixelButton>
         </div>
       </div>
     </section>
