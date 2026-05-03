@@ -4,7 +4,7 @@ Welcome to **PORTFOLIO.EXE** — my retro, RPG, and terminal-inspired personal p
 
 ![Portfolio Preview](./public/assets/protfolio1.png)
 
-🔗 **Live Demo**: [Insert Your Netlify Link Here]
+🔗 **Live Demo**: (https://shivam-kushwaha.netlify.app/)
 
 ---
 
